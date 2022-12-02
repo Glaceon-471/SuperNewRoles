@@ -6,38 +6,25 @@ namespace SuperNewRoles.Roles;
 
 public class Vulture
 {
-    // private static readonly List<DeadBody> Targets = new();
     public class FixedUpdate
     {
         public static void Postfix()
         {
-            if (RoleClass.Vulture.Arrow == null)
+            if (ArrowPointingToDeadBody == null)
             {
                 Arrow arrow = new(RoleClass.Vulture.color);
-                RoleClass.Vulture.Arrow = arrow;
+                ArrowPointingToDeadBody = arrow;
             }
-            float min_target_distance = float.MaxValue;
-            DeadBody target = null;
-            DeadBody[] deadBodies = Object.FindObjectsOfType<DeadBody>();
-            foreach (DeadBody db in deadBodies)
+            DeadBody[] targets = null;
+            targets = ArrowForFindDeadBody();
+            foreach (DeadBody target in targets)
             {
-                if (db == null)
+                if (ArrowPointingToDeadBody != null && target != null)
                 {
-                    RoleClass.Vulture.Arrow.arrow.SetActive(false);
+                    ArrowPointingToDeadBody.Update(target.transform.position, color: RoleClass.Vulture.color);
                 }
-                float target_distance = Vector3.Distance(CachedPlayer.LocalPlayer.transform.position, db.transform.position);
-
-                if (target_distance < min_target_distance)
-                {
-                    min_target_distance = target_distance;
-                    target = db;
-                }
+                ArrowPointingToDeadBody.arrow.SetActive(target != null);
             }
-            if (RoleClass.Vulture.Arrow != null && target != null)
-            {
-                RoleClass.Vulture.Arrow.Update(target.transform.position, color: RoleClass.Vulture.color);
-            }
-            RoleClass.Vulture.Arrow.arrow.SetActive(target != null);
         }
     }
     public static void RpcCleanDeadBody(int? count)
@@ -70,5 +57,32 @@ public class Vulture
                 }
             }
         }
+    }
+
+    public static DeadBody[] ArrowForFindDeadBody()
+    {
+        float min_target_distance = float.MaxValue;
+        DeadBody target = null;
+        DeadBody[] deadBodies = Object.FindObjectsOfType<DeadBody>();
+        foreach (DeadBody db in deadBodies)
+        {
+            if (db == null)
+            {
+                ArrowPointingToDeadBody.arrow.SetActive(false);
+            }
+            float target_distance = Vector3.Distance(CachedPlayer.LocalPlayer.transform.position, db.transform.position);
+
+            if (target_distance < min_target_distance)
+            {
+                min_target_distance = target_distance;
+                target = db;
+            }
+        }
+        return deadBodies;
+    }
+    public static Arrow ArrowPointingToDeadBody;
+    public static void ArrowClearAndReload()
+    {
+            ArrowPointingToDeadBody = null;
     }
 }

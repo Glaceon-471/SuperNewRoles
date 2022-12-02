@@ -5,6 +5,7 @@ using SuperNewRoles.Helpers;
 using SuperNewRoles.Mode;
 using SuperNewRoles.Mode.SuperHostRoles;
 using SuperNewRoles.Roles;
+using SuperNewRoles.Roles.Impostor;
 using SuperNewRoles.Sabotage;
 using UnityEngine;
 
@@ -145,6 +146,9 @@ public class FixedUpdate
                         case RoleId.Vulture:
                             Vulture.FixedUpdate.Postfix();
                             break;
+                        case RoleId.EvilSeer:
+                            EvilSeer.FixedUpdate.Postfix();
+                            break;
                         case RoleId.Mafia:
                             Mafia.FixedUpdate();
                             break;
@@ -227,9 +231,10 @@ public class FixedUpdate
                             }
                             break;
                         case RoleId.Vulture:
-                            if (RoleClass.Vulture.Arrow?.arrow != null)
+                        case RoleId.EvilSeer:
+                            if (Vulture.ArrowPointingToDeadBody?.arrow != null)
                             {
-                                Object.Destroy(RoleClass.Vulture.Arrow.arrow);
+                                Object.Destroy(Vulture.ArrowPointingToDeadBody.arrow);
                                 return;
                             }
                             break;

@@ -72,6 +72,7 @@ public static class RoleClass
         NiceGuesser.ClearAndReload();
         EvilGuesser.ClearAndReload();
         Vulture.ClearAndReload();
+        Roles.Vulture.ArrowClearAndReload();
         NiceScientist.ClearAndReload();
         Clergyman.ClearAndReload();
         Madmate.ClearAndReload();
@@ -561,7 +562,6 @@ public static class RoleClass
         public static int DeadBodyCount;
         public static bool IsUseVent;
         public static bool ShowArrows;
-        public static Arrow Arrow;
         public static Sprite GetButtonSprite() => ModHelpers.LoadSpriteFromResources("SuperNewRoles.Resources.VultureButton.png", 115f);
 
         public static void ClearAndReload()
@@ -571,7 +571,6 @@ public static class RoleClass
             DeadBodyCount = CustomOptionHolder.VultureDeadBodyMaxCount.GetInt();
             IsUseVent = CustomOptionHolder.VultureIsUseVent.GetBool();
             ShowArrows = CustomOptionHolder.VultureShowArrows.GetBool();
-            Arrow = null;
         }
     }
     public static class NiceScientist
