@@ -5,6 +5,7 @@ using HarmonyLib;
 using SuperNewRoles.CustomObject;
 using SuperNewRoles.Patches;
 using SuperNewRoles.Roles.Impostor;
+using SuperNewRoles.Roles.Neutral;
 using SuperNewRoles.Sabotage;
 using TMPro;
 using UnityEngine;
@@ -72,7 +73,7 @@ public static class RoleClass
         NiceGuesser.ClearAndReload();
         EvilGuesser.ClearAndReload();
         Vulture.ClearAndReload();
-        Roles.Vulture.ArrowClearAndReload();
+        Neutral.Vulture.ArrowClearAndReload();
         NiceScientist.ClearAndReload();
         Clergyman.ClearAndReload();
         Madmate.ClearAndReload();

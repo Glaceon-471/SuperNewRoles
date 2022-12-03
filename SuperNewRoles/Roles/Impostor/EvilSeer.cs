@@ -1,4 +1,5 @@
 using SuperNewRoles.CustomObject;
+using SuperNewRoles.Roles.Neutral;
 using UnityEngine;
 using Hazel;
 

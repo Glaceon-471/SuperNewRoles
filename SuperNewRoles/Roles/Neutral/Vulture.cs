@@ -2,7 +2,7 @@ using SuperNewRoles.CustomObject;
 using UnityEngine;
 using Hazel;
 
-namespace SuperNewRoles.Roles;
+namespace SuperNewRoles.Roles.Neutral;
 
 public class Vulture
 {
