@@ -8,6 +8,7 @@ public class Arrow
     public SpriteRenderer image;
     public GameObject arrow;
     private Vector3 oldTarget;
+    private ArrowBehaviour arrowBehaviour;
 
     public static Sprite GetSprite() => ModHelpers.LoadSpriteFromResources("SuperNewRoles.Resources.Arrow.png", 200f);
 
@@ -20,6 +21,8 @@ public class Arrow
         image = arrow.AddComponent<SpriteRenderer>();
         image.sprite = GetSprite();
         image.color = color;
+        arrowBehaviour = arrow.AddComponent<ArrowBehaviour>();
+        arrowBehaviour.image = image;
     }
 
     public void Update()
@@ -33,6 +36,9 @@ public class Arrow
     {
         if (arrow == null) return;
         oldTarget = target;
+
+        arrowBehaviour.target = target;
+        arrowBehaviour.Update();
 
         if (color.HasValue) image.color = color.Value;
 

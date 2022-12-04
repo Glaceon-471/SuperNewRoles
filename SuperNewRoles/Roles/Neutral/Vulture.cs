@@ -1,4 +1,7 @@
 using SuperNewRoles.CustomObject;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Hazel;
 
@@ -10,22 +13,99 @@ public class Vulture
     {
         public static void Postfix()
         {
-            if (ArrowPointingToDeadBody == null)
+            if (ArrowPointingToDeadBody == null) ArrowPointingToDeadBody.Add(new(RoleClass.Vulture.color));
+            float min_target_distance = float.MaxValue;
+            DeadBody target = null;
+            DeadBody[] deadBodies = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+            bool arrowUpdate = ArrowPointingToDeadBody.Count != deadBodies.Count();
+
+            int index = 0;
+
+            if (arrowUpdate)
             {
-                Arrow arrow = new(RoleClass.Vulture.color);
-                ArrowPointingToDeadBody = arrow;
+                foreach (Arrow arrow in ArrowPointingToDeadBody) UnityEngine.Object.Destroy(arrow.arrow);
+                ArrowPointingToDeadBody = new List<Arrow>();
             }
-            DeadBody[] targets = null;
-            targets = ArrowForFindDeadBody();
-            foreach (DeadBody target in targets)
+            foreach (DeadBody db in deadBodies)
             {
-                if (ArrowPointingToDeadBody != null && target != null)
+                if (db == null)
                 {
-                    ArrowPointingToDeadBody.Update(target.transform.position, color: RoleClass.Vulture.color);
+                    ArrowPointingToDeadBody[index].arrow.SetActive(false);
                 }
-                ArrowPointingToDeadBody.arrow.SetActive(target != null);
+                if (arrowUpdate)
+                {
+                    if (ArrowPointingToDeadBody.Count != 0 && ArrowPointingToDeadBody[index] != null && db != null && target != null)
+                    {
+                        ArrowPointingToDeadBody[index].Update(target.transform.position, color: RoleClass.Vulture.color);
+                        ArrowPointingToDeadBody[index].arrow.SetActive(target != null);
+                    }
+                    float target_distance = Vector3.Distance(CachedPlayer.LocalPlayer.transform.position, db.transform.position);
+
+                    if (target_distance < min_target_distance)
+                    {
+                        min_target_distance = target_distance;
+                        target = db;
+                    }
+                }
+                index++;
             }
+            /*foreach (DeadBody db in deadBodies)
+            {
+                if (db == null)
+                {
+                    RoleClass.Vulture.Arrow.arrow.SetActive(false);
+                }
+                float target_distance = Vector3.Distance(CachedPlayer.LocalPlayer.transform.position, db.transform.position);
+
+                if (target_distance < min_target_distance)
+                {
+                    min_target_distance = target_distance;
+                    target = db;
+                }
+            }*/
+            /*if (RoleClass.Vulture.Arrow != null && target != null)
+            {
+                RoleClass.Vulture.Arrow.Update(target.transform.position, color: RoleClass.Vulture.color);
+            }
+            RoleClass.Vulture.Arrow.arrow.SetActive(target != null);*/
         }
+        /*public static void Postfix()
+        {
+            if (ArrowPointingToDeadBody == null) ArrowPointingToDeadBody.Add(new(RoleClass.Vulture.color));
+            float min_target_distance = float.MaxValue;
+            DeadBody target = null;
+            DeadBody[] deadBodies = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+            bool arrowUpdate = ArrowPointingToDeadBody.Count != deadBodies.Count();
+
+            int index = 0;
+
+            if (arrowUpdate)
+            {
+                foreach (Arrow arrow in ArrowPointingToDeadBody) UnityEngine.Object.Destroy(arrow.arrow);
+                ArrowPointingToDeadBody = new List<Arrow>();
+            }
+
+            foreach (DeadBody db in deadBodies)
+            {
+                if (arrowUpdate)
+                {
+                    if (ArrowPointingToDeadBody.Count != 0 && ArrowPointingToDeadBody[index] != null && db != null)
+                    {
+                        ArrowPointingToDeadBody[index].Update(target.transform.position, color: RoleClass.Vulture.color);
+                        ArrowPointingToDeadBody[index].arrow.SetActive(target != null);
+                    }
+                    float target_distance = Vector3.Distance(CachedPlayer.LocalPlayer.transform.position, db.transform.position);
+
+                    if (target_distance < min_target_distance)
+                    {
+                        min_target_distance = target_distance;
+                        target = db;
+                    }
+                }
+                index++;
+            }
+        }*/
+
     }
     public static void RpcCleanDeadBody(int? count)
     {
@@ -59,30 +139,20 @@ public class Vulture
         }
     }
 
-    public static DeadBody[] ArrowForFindDeadBody()
-    {
-        float min_target_distance = float.MaxValue;
-        DeadBody target = null;
-        DeadBody[] deadBodies = Object.FindObjectsOfType<DeadBody>();
-        foreach (DeadBody db in deadBodies)
-        {
-            if (db == null)
-            {
-                ArrowPointingToDeadBody.arrow.SetActive(false);
-            }
-            float target_distance = Vector3.Distance(CachedPlayer.LocalPlayer.transform.position, db.transform.position);
-
-            if (target_distance < min_target_distance)
-            {
-                min_target_distance = target_distance;
-                target = db;
-            }
-        }
-        return deadBodies;
-    }
-    public static Arrow ArrowPointingToDeadBody;
+    public static List<Arrow> ArrowPointingToDeadBody = new();
     public static void ArrowClearAndReload()
     {
-            ArrowPointingToDeadBody = null;
+        ArrowPointingToDeadBody = null;
+    }
+
+    public static void ArrowDelete()
+    {
+        if (ArrowPointingToDeadBody == null) return;
+        if (CachedPlayer.LocalPlayer.Data.IsDead)
+        {
+            foreach (Arrow arrow in ArrowPointingToDeadBody) UnityEngine.Object.Destroy(arrow.arrow);
+            ArrowPointingToDeadBody = new List<Arrow>();
+            return;
+        }
     }
 }

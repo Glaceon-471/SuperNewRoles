@@ -8,6 +8,9 @@ using SuperNewRoles.Roles;
 using SuperNewRoles.Roles.Impostor;
 using SuperNewRoles.Roles.Neutral;
 using SuperNewRoles.Sabotage;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SuperNewRoles.Patches;
@@ -233,11 +236,7 @@ public class FixedUpdate
                             break;
                         case RoleId.Vulture:
                         case RoleId.EvilSeer:
-                            if (Vulture.ArrowPointingToDeadBody?.arrow != null)
-                            {
-                                Object.Destroy(Vulture.ArrowPointingToDeadBody.arrow);
-                                return;
-                            }
+                            Vulture.ArrowDelete();
                             break;
                     }
                 }
